@@ -1,54 +1,38 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class Main {
-    /**
-     * @param args
-     */
+//Дана строка sql-запроса "select * from students where ". Сформируйте часть WHERE этого запроса, используя StringBuilder. Данные для фильтрации приведены ниже в виде json строки.
+
+//Если значение null, то параметр не должен попадать в запрос.
+
+//Параметры для фильтрации: {"name":"Ivanov", "country":"Russia", "city":"Moscow", "age":"null"}
+
+public class DZ2 {
     public static void main(String[] args) {
-    
-    int[] anArray = new int[] {3, 2, 7, 0, 4, 9, 2, 6, 8, 3};
+        Map<String, String> given = new LinkedHashMap<>();
+        given.put("name","Ivanov");
+        given.put("country","Russia");
+        given.put("city","Moskow");
+        given.put("age",null);
 
-
-    String filePath = "log.txt";
-    try (FileWriter writer = new FileWriter(filePath, true)) {
-        BufferedWriter bufferWriter = new BufferedWriter(writer);
-        bufferWriter.write(Arrays.toString(anArray) + "\n");
-        bufferWriter.close();
-    } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+        System.out.println(getQuery(given));
     }
-    for (int i = 0; i < anArray.length - 1; i++) {
-        for(int j = 0; j < anArray.length - i - 1; j++) {
-            if(anArray[j + 1] < anArray[j]) {
-                int swap = anArray[j];
-                anArray[j] = anArray[j + 1];
-                anArray[j + 1] = swap;
 
-                try (FileWriter writer = new FileWriter(filePath, true)) {
-                    BufferedWriter bufferWriter = new BufferedWriter(writer);
-                    bufferWriter.write(Arrays.toString(anArray) + "\n");
-                    bufferWriter.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+    public static String getQuery(Map<String, String> parameter) {
+        StringBuilder result = new StringBuilder();
+        if (parameter == null || parameter.isEmpty())
+            return result.toString();
 
+        for (Map.Entry<String, String> pair : parameter.entrySet()) {
+            if (pair.getKey() == null || pair.getValue() == null)
+                continue;
 
+            result.append(pair.getKey()).append(" = '").append(pair.getValue()).append("' and ");
         }
-    }
-}
-    System.out.println(Arrays.toString(anArray));   
+
+        if (result.length() > 5)
+            result.delete(result.length() - 5, result.length());
+
+        return result.toString();
     }
 }
